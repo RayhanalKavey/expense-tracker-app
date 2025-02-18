@@ -22,6 +22,7 @@ function submitTransaction() {
   }
 
   newTrack.value.id = transactions.value.length + 1; //Create Id of new task
+  newTrack.value.type = newTrack.value.type.toUpperCase(); // Convert type to uppercase
   transactions.value.push(newTrack.value); // Update list by pushing new transaction
   localStorage.setItem("transactions", JSON.stringify(transactions.value)); //Store in the local storage
   newTrack.value = {
