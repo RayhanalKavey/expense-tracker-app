@@ -1,7 +1,7 @@
 <script setup>
 import { ref, defineEmits } from "vue";
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "toast"]);
 
 const transactions = defineModel({
   type: Array,
@@ -33,6 +33,7 @@ function submitTransaction() {
   }; //Reset input field
 
   emit("close");
+  emit("toast", "Transaction added successfully!");
 }
 </script>
 

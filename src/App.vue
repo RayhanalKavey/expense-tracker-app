@@ -4,36 +4,27 @@ import AddTransaction from "./components/AddTransaction.vue";
 import { ref, onMounted, computed } from "vue";
 
 const transactions = ref([]);
+
 // Add transaction modal state
 const add = ref(false);
+
 // Filter state
 const selectedFilter = ref("ALL");
+
 // Delete confirmation modal state
 const deleteModal = ref(false);
 const transactionToDelete = ref(null);
 
-// Open delete confirmation modal
-const confirmDelete = (id) => {
-  transactionToDelete.value = id;
-  deleteModal.value = true;
-};
+// Toast Notification
+const toastMessage = ref("");
+const showToast = ref(false);
 
 onMounted(() => {
   const storedTransactions =
     JSON.parse(localStorage.getItem("transactions")) || [];
   transactions.value = storedTransactions;
 });
-// Delete a transaction based of id after confirmation
-const deleteTransaction = () => {
-  if (transactionToDelete.value !== null) {
-    transactions.value = transactions.value.filter(
-      (transaction) => transaction.id !== transactionToDelete.value
-    );
-    localStorage.setItem("transactions", JSON.stringify(transactions.value));
-  }
-  deleteModal.value = false;
-  transactionToDelete.value = null;
-};
+
 // Computed property to filter transactions based on the selected filter
 const filteredTransactions = computed(() => {
   if (selectedFilter.value === "INCOME") {
@@ -43,26 +34,53 @@ const filteredTransactions = computed(() => {
   }
   return transactions.value;
 });
+// Open delete confirmation modal
+const confirmDelete = (id) => {
+  transactionToDelete.value = id;
+  deleteModal.value = true;
+};
+// Delete a transaction based of id after confirmation
+const deleteTransaction = () => {
+  if (transactionToDelete.value !== null) {
+    transactions.value = transactions.value.filter(
+      (transaction) => transaction.id !== transactionToDelete.value
+    );
+    localStorage.setItem("transactions", JSON.stringify(transactions.value));
+    // Show toast message for successful deletion
+    showToastMessage("Transaction deleted successfully!");
+  }
+  deleteModal.value = false;
+  transactionToDelete.value = null;
+};
+// Show toast message
+const showToastMessage = (message) => {
+  toastMessage.value = message;
+  showToast.value = true;
+  setTimeout(() => {
+    showToast.value = false;
+  }, 2000); // Hide toast after 2 seconds
+};
 </script>
 
 <template>
   <div class="container mx-auto p-6">
     <h1 class="text-center text-6xl font-bold mb-6">Expense Tracker</h1>
 
-    <!-- Modal -->
+    <!--Add Modal -->
     <div
       v-if="add"
       class="fixed inset-0 bg-black/30 flex justify-center items-center p-4">
-      <!-- Modal Container (No Shadow) -->
       <div
         class="bg-white p-6 rounded-lg w-full max-w-md sm:max-w-lg lg:max-w-xl relative">
-        <!-- Close Button -->
         <button
           @click="add = false"
           class="absolute top-3 right-5 text-gray-500 hover:text-red-500 text-5xl">
           &times;
         </button>
-        <add-transaction v-model="transactions" @close="add = false" />
+        <add-transaction
+          v-model="transactions"
+          @close="add = false"
+          @toast="showToastMessage" />
       </div>
     </div>
     <!-- Filter Buttons -->
@@ -104,6 +122,7 @@ const filteredTransactions = computed(() => {
         New Transaction
       </button>
     </div>
+    <!-- Transaction list -->
     <transaction-list
       :transactions="filteredTransactions"
       @delete-transaction="confirmDelete" />
@@ -128,6 +147,13 @@ const filteredTransactions = computed(() => {
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div
+      v-if="showToast"
+      class="fixed bottom-5 right-5 bg-green-500 text-white px-4 py-3 rounded-md shadow-lg transition-opacity duration-500">
+      {{ toastMessage }}
     </div>
   </div>
 </template>
