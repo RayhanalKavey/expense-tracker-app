@@ -2,6 +2,7 @@
 defineProps({
   transactions: Array,
 });
+const emit = defineEmits(["delete-transaction"]);
 
 const getAmountClass = (amount, type) => {
   return {
@@ -31,8 +32,8 @@ const getAmountClass = (amount, type) => {
           </td>
         </tr>
         <tr
-          v-for="(transaction, index) in transactions"
-          :key="index"
+          v-for="transaction in transactions"
+          :key="transaction.id"
           class="border">
           <td class="border p-2">{{ transaction.title }}</td>
           <td
@@ -46,7 +47,7 @@ const getAmountClass = (amount, type) => {
           <td class="border p-2">
             <button
               class="bg-red-500 text-white px-2 py-1 rounded"
-              @click="$emit('delete-transaction', index)">
+              @click="emit('delete-transaction', transaction.id)">
               Delete
             </button>
           </td>
