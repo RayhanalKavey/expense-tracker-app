@@ -1,8 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
-// defineProps({
-//   transactions: Array,
-// });
+
 const props = defineProps({
   transactions: Array, // ✅ Ensure transactions is received as a prop
 });
@@ -17,7 +15,7 @@ const getAmountClass = (amount, type) => {
 };
 /* ===Pagination=== */
 const currentPage = ref(1);
-const itemsPerPage = 3;
+const itemsPerPage = 5;
 
 // Compute total pages
 const totalPages = computed(() =>
