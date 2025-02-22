@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 const props = defineProps({
   transactions: Array, // ✅ Ensure transactions is received as a prop
@@ -14,7 +14,7 @@ const getAmountClass = (amount, type) => {
   };
 };
 /* ===Pagination=== */
-const currentPage = ref(1);
+const currentPage = ref(props.transactions);
 const itemsPerPage = 5;
 
 // Compute total pages
@@ -35,6 +35,12 @@ const goToPage = (page) => {
 };
 // console.log("transactions", transactions);
 // console.log("paginatedTransactions", paginatedTransactions);
+watch(
+  () => props.transactions,
+  () => {
+    currentPage.value = 1;
+  }
+);
 </script>
 
 <template>

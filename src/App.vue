@@ -1,7 +1,7 @@
 <script setup>
 import TransactionList from "./components/TransactionList.vue";
 import AddTransaction from "./components/AddTransaction.vue";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 
 const transactions = ref([]);
 
@@ -60,6 +60,10 @@ const showToastMessage = (message) => {
     showToast.value = false;
   }, 2000); // Hide toast after 2 seconds
 };
+const currentPage = ref(1);
+watch(selectedFilter, () => {
+  currentPage.value = 1;
+});
 </script>
 
 <template>
@@ -125,6 +129,7 @@ const showToastMessage = (message) => {
     <!-- Transaction list -->
     <transaction-list
       :transactions="filteredTransactions"
+      :current-page="currentPage"
       @delete-transaction="confirmDelete" />
 
     <!-- Delete Confirmation Modal -->
